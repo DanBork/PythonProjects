@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9202e20f-5f8e-4247-9d32-057c9c82e249" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/MatrixMultiplication.py" beforeDir="false" afterPath="$PROJECT_DIR$/MatrixMultiplication.py" afterDir="false" />
+    <list default="true" id="9202e20f-5f8e-4247-9d32-057c9c82e249" name="Changes" comment="Added Matrix Multiplication code">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +43,21 @@
       <option name="presentableId" value="Default" />
       <updated>1732613427880</updated>
     </task>
+    <task id="LOCAL-00001" summary="test">
+      <created>1732653008920</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1732653008920</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Added Matrix Multiplication code">
+      <created>1732653042029</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1732653042029</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -55,5 +70,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="test" />
+    <MESSAGE value="Added Matrix Multiplication code" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Matrix Multiplication code" />
   </component>
 </project>
