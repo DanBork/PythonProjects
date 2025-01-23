@@ -42,7 +42,7 @@ def loadDataSet(fileName):
     dataMat = []
     fr = open(fileName)
     for line in fr.readlines():
-        curLine = line.strip().split('\t')
+        curLine = line.strip().split('\\t')
         fltLine = list(map(float, curLine))
         dataMat.append(fltLine)
     return array(dataMat)
@@ -58,9 +58,7 @@ def createTree(dataSet, leafType=regLeaf, errType=regErr, ops=(1,4)):
     feat, val = chooseBestSplit(dataSet, leafType, errType, ops)
     if feat is None:
         return val
-    retTree = {}
-    retTree['spInd'] = feat
-    retTree['spVal'] = val
+    retTree = {'spInd': feat, 'spVal': val}
     lSet, rSet = binSplitDataSet(dataSet, feat, val)
     retTree['left'] = createTree(lSet, leafType, errType, ops)
     retTree['right'] = createTree(rSet, leafType, errType, ops)
@@ -96,16 +94,8 @@ def chooseBestSplit(dataSet, leafType=regLeaf, errType=regErr, ops=(1, 4)):
     return bestIndex, bestValue
 
 
-def getMean(tree):
-    if isTree(tree['right']):
-        tree['right'] = getMean(tree['right'])
-    if isTree(tree['left']):
-        tree['left'] = getMean(tree['left'])
-    return (tree['left'] + tree['right']) / 2.0
-
-
 # Load the dataset
-myData = loadDataSet('LinearApprox.txt')
+myData = loadDataSet('polynomial.txt')
 myMatrix = array(myData)
 
 # Create the tree
@@ -114,20 +104,24 @@ myTree = createTree(myMatrix, modelLeaf, modelErr, ops=(1, 10))
 print(myTree)
 
 # Plot results
-x = linspace(min(myMatrix[:, 0]), max(myMatrix[:, 0]), 100)
-y = piecewise(
-    x,
-    [x > myTree['spVal'], x <= myTree['spVal']],
-    [
-        lambda x: myTree['left'][0] + myTree['left'][1] * x,
-        lambda x: myTree['right'][0] + myTree['right'][1] * x
-    ]
-)
+def plot_tree(tree, x_range):
+    if isinstance(tree, dict):
+        split = tree['spVal']
+        plot_tree(tree['right'], (x_range[0], split))
+        plot_tree(tree['left'], (split, x_range[1]))
+    else:
+        # Plot the linear segment
+        slope, intercept = tree
+        x_vals = linspace(x_range[0], x_range[1], 100)
+        y_vals = slope + intercept * x_vals
+        plt.plot(x_vals, y_vals)
 
-plt.figure(figsize=(8, 6))
-plt.scatter(myMatrix[:, 0], myMatrix[:, 1], c="blue", label="Data Points")
+# Plot the tree
+plt.figure(figsize=(10, 6))
+plot_tree(myTree, (-5, 5))
 
-plt.plot(x, y, color='orange', linewidth=2, label="CART approximation")
+plt.scatter(myMatrix[:, 0], myMatrix[:, 1], c="blue", label="Data Points", s=4)
+
 
 plt.xlabel("X")
 plt.ylabel("Y")
