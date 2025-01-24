@@ -42,7 +42,7 @@ def loadDataSet(fileName):
     dataMat = []
     fr = open(fileName)
     for line in fr.readlines():
-        curLine = line.strip().split('\\t')
+        curLine = line.strip().split(',')
         fltLine = list(map(float, curLine))
         dataMat.append(fltLine)
     return array(dataMat)
@@ -94,16 +94,6 @@ def chooseBestSplit(dataSet, leafType=regLeaf, errType=regErr, ops=(1, 4)):
     return bestIndex, bestValue
 
 
-# Load the dataset
-myData = loadDataSet('polynomial.txt')
-myMatrix = array(myData)
-
-# Create the tree
-myTree = createTree(myMatrix, modelLeaf, modelErr, ops=(1, 10))
-
-print(myTree)
-
-# Plot results
 def plot_tree(tree, x_range):
     if isinstance(tree, dict):
         split = tree['spVal']
@@ -116,18 +106,34 @@ def plot_tree(tree, x_range):
         y_vals = slope + intercept * x_vals
         plt.plot(x_vals, y_vals)
 
+
+# Load the dataset
+myData = loadDataSet('polynomial.txt')
+myMatrix = array(myData)
+
+# Create the tree
+leafType = modelLeaf
+errType = modelErr
+
+myTree = createTree(myMatrix, leafType, errType, ops=(1, 10))
+
+print(myTree)
+
+# Plot results
+
 # Plot the tree
 plt.figure(figsize=(10, 6))
-plot_tree(myTree, (-5, 5))
 
 plt.scatter(myMatrix[:, 0], myMatrix[:, 1], c="blue", label="Data Points", s=4)
 
-
 plt.xlabel("X")
 plt.ylabel("Y")
-plt.title("Data Points with Piecewise Linear Fit")
+plt.title("Data Points")
 plt.legend()
 plt.grid()
+if leafType == modelLeaf:
+    plot_tree(myTree, (min(myMatrix[:, 0]), max(myMatrix[:, 0])))
+    plt.title("Data Points with Linear Fit")
 
 # Show the plot
 plt.show()
