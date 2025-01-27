@@ -6,7 +6,7 @@ from CART import loadDataSet, binSplitDataSet, createTree, chooseBestSplit, regE
 class TestTreeFunctions(unittest.TestCase):
 
     def setUp(self):
-        # Create a small dataset for testing
+        # small dataset for testing
         self.data = np.array([
             [1.0, 2.1, 1.0],
             [1.3, 3.4, 1.0],
@@ -48,7 +48,8 @@ class TestTreeFunctions(unittest.TestCase):
         # Test choosing the best split
         bestIndex, bestValue = chooseBestSplit(self.data, leafType=regLeaf, errType=regErr, ops=(1, 2))
         self.assertEqual(bestIndex, 1)
-        self.assertAlmostEqual(bestValue, 1.4)  # Best split value should be around 1.2
+        self.assertAlmostEqual(bestValue, 1.4)
+
 
 if __name__ == '__main__':
     unittest.main()

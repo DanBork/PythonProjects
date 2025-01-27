@@ -3,14 +3,17 @@ import matplotlib.pyplot as plt
 from numpy import linalg
 
 
+# Leaf model for classification
 def regLeaf(dataSet):
     return mean(dataSet[:, -1])
 
 
+# Error model for classification
 def regErr(dataSet):
     return var(dataSet[:, -1]) * shape(dataSet)[0]
 
 
+# Solve the matrix, to get coefficients
 def linearSolve(dataset):
     m, n = shape(dataset)
     X = full((m, n), 1.0)
@@ -23,11 +26,13 @@ def linearSolve(dataset):
     return ws, X, Y
 
 
+# Leaf model for linear approximation
 def modelLeaf(dataset):
     ws, X, Y = linearSolve(dataset)
     return ws
 
 
+# Error model for linear approximation
 def modelErr(dataset):
     ws, X, Y = linearSolve(dataset)
     yHat = matmul(X, ws)
@@ -39,6 +44,7 @@ def isTree(obj):
 
 
 def loadDataSet(fileName):
+    # read csv and return it as an array
     dataMat = []
     fr = open(fileName)
     for line in fr.readlines():
@@ -49,15 +55,17 @@ def loadDataSet(fileName):
 
 
 def binSplitDataSet(dataSet, feature, value):
+    # Divide into 2 parts
     mat0 = dataSet[nonzero(dataSet[:, feature] > value)[0], :]
     mat1 = dataSet[nonzero(dataSet[:, feature] <= value)[0], :]
     return mat0, mat1
 
 
-def createTree(dataSet, leafType=regLeaf, errType=regErr, ops=(1,4)):
+def createTree(dataSet, leafType=regLeaf, errType=regErr, ops=(1, 4)):
     feat, val = chooseBestSplit(dataSet, leafType, errType, ops)
     if feat is None:
         return val
+    # build tree recursively, splitting dataset into smaller segments
     retTree = {'spInd': feat, 'spVal': val}
     lSet, rSet = binSplitDataSet(dataSet, feat, val)
     retTree['left'] = createTree(lSet, leafType, errType, ops)
@@ -66,8 +74,8 @@ def createTree(dataSet, leafType=regLeaf, errType=regErr, ops=(1,4)):
 
 
 def chooseBestSplit(dataSet, leafType=regLeaf, errType=regErr, ops=(1, 4)):
-    tolS = ops[0]
-    tolN = ops[1]
+    tolS = ops[0]   # tolerance in err. reduction
+    tolN = ops[1]   # min. data instances to include in a split
     # Check if all target values are the same
     if len(set(dataSet[:, -1].tolist())) == 1:
         return None, leafType(dataSet)
@@ -76,6 +84,7 @@ def chooseBestSplit(dataSet, leafType=regLeaf, errType=regErr, ops=(1, 4)):
     bestS = inf
     bestIndex = 0
     bestValue = 0
+    # iterate over all features and values to find split with the lowest error
     for featIndex in range(n - 1):
         for splitVal in set(dataSet[:, featIndex]):
             mat0, mat1 = binSplitDataSet(dataSet, featIndex, splitVal)
@@ -86,16 +95,19 @@ def chooseBestSplit(dataSet, leafType=regLeaf, errType=regErr, ops=(1, 4)):
                 bestIndex = featIndex
                 bestValue = splitVal
                 bestS = newS
+    # exit if low error reduction
     if (S - bestS) < tolS:
         return None, leafType(dataSet)
     mat0, mat1 = binSplitDataSet(dataSet, bestIndex, bestValue)
+    # exit if dataset created in split is too small
     if (shape(mat0)[0] < tolN) or (shape(mat1)[0] < tolN):
         return None, leafType(dataSet)
     return bestIndex, bestValue
 
 
 def plot_tree(tree, x_range):
-    if isinstance(tree, dict):
+    if isTree(tree):
+        # Recursively search through the tree to find the leaf nodes
         split = tree['spVal']
         plot_tree(tree['right'], (x_range[0], split))
         plot_tree(tree['left'], (split, x_range[1]))
@@ -111,10 +123,12 @@ def plot_tree(tree, x_range):
 myData = loadDataSet('polynomial.txt')
 myMatrix = array(myData)
 
-# Create the tree
+# Linear approx: modelLeaf & modelErr
+# Classification: regLeaf & regErr
 leafType = modelLeaf
 errType = modelErr
 
+# Create the tree
 myTree = createTree(myMatrix, leafType, errType, ops=(1, 10))
 
 print(myTree)
